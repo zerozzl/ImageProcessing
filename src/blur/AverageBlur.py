@@ -9,20 +9,33 @@ def plotImage(datas):
     plt.imshow(datas)
     plt.show()
 
-def blur_process(filepath):
-    im = Image.open("E:/TestDatas/ImageProcessing/test.png");
-    im = np.array(im);
+def blur_process(filepath, radius):
+    im_src = Image.open(filepath);
     
-    size = np.shape(im);
-    im = np.column_stack((np.zeros((size[0], 1, size[2])), im));
-    im = np.column_stack((im, np.zeros((size[0], 1, size[2]))));
-    im = np.row_stack((np.zeros((1, size[1] + 2, size[2])), im));
-    im = np.row_stack((im, np.zeros((1, size[1] + 2, size[2]))));
+    im = np.array(im_src);
+    size_old = np.shape(im);
+    im = np.column_stack((np.zeros((size_old[0], radius, size_old[2])), im));
+    im = np.column_stack((im, np.zeros((size_old[0], radius, size_old[2]))));
+    im = np.row_stack((np.zeros((radius, size_old[1] + 2 * radius, size_old[2])), im));
+    im = np.row_stack((im, np.zeros((radius, size_old[1] + 2 * radius, size_old[2]))));
     
-#     plotImage(im[:,:,0]);
-#     plotImage(im[:,:,1]);
-#     plotImage(im[:,:,2]);
-#     plotImage(im[:,:,3]);
+    size_new = np.shape(im);
+    im_new = np.zeros(size_old);
+    
+    for k in range(size_old[2]):
+        for i in range(radius, size_new[0] - radius, 1):
+            for j in range(radius, size_new[1] - radius, 1):
+                im_new[i - radius, j - radius, k] = ((np.sum(im[i - radius:i + radius + 1, j - radius:j + radius + 1, k]) - im[i, j, k]) / (np.square(radius * 2 + 1) - 1)) / 255;
+    
+    fig = plt.figure()
+    ax1 = fig.add_subplot(121);
+    ax2 = fig.add_subplot(122)
+    ax1.imshow(im_src)
+    ax2.imshow(im_new)
+    plt.show()
 
-blur_process("E:/TestDatas/ImageProcessing/test.png");
+
+filepath = "E:/TestDatas/ImageProcessing/test1.png";
+radius = 5;
+blur_process(filepath, radius);
 
