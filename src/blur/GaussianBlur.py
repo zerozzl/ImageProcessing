@@ -39,7 +39,18 @@ def gaussian_blur_2d(filepath, radius):
     ax2.imshow(im_new);
     plt.show();
 
+def init_1d_gaussian_kernel(radius):
+    theta = radius / 3.0;
+    kernel_h = np.zeros((1, 2 * radius + 1));
+    kernel_v = np.zeros((2 * radius + 1, 1));
+    for i in range(2 * radius + 1):
+        kernel_h[0, i] = round(np.exp(-np.square(i - radius) / (2 * np.square(theta))) / (theta * np.sqrt(2 * math.pi)), 10);
+        kernel_v[i, 0] = round(np.exp(-np.square(i - radius) / (2 * np.square(theta))) / (theta * np.sqrt(2 * math.pi)), 10);
+    kernel_h = kernel_h / np.sum(kernel_h);
+    kernel_v = kernel_v / np.sum(kernel_v);
+    return kernel_h, kernel_v;
 
 filepath = "E:/TestDatas/ImageProcessing/test2.png";
 radius = 3;
-gaussian_blur_2d(filepath, radius);
+# gaussian_blur_2d(filepath, radius);
+init_1d_gaussian_kernel(radius);
